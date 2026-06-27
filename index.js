@@ -15,10 +15,9 @@ app.use(urlencoded({ extended: false }))
 
 
 app.post("/", async (req, res, next) => {
-    console.log(req.body)
+
     const { firstName, lastName, email, company, title, accessTime } = req.body
 
-    console.log(resend.baseUrl)
     try {
         const response = await resend.emails.send({
             from: "Acacia Notifications <onboarding@resend.dev>",
@@ -188,8 +187,10 @@ app.post("/", async (req, res, next) => {
 })
 
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`)
-})
+if (process.env.NODE_ENV !== "production") {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
-
+export default app;

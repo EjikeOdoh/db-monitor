@@ -13,6 +13,10 @@ app.use(cors())
 app.use(json())
 app.use(urlencoded({ extended: false }))
 
+app.get("/", ()=>{
+  res.status(200).send("Success")
+})
+
 
 app.post("/", async (req, res, next) => {
 
@@ -21,7 +25,7 @@ app.post("/", async (req, res, next) => {
     try {
         const response = await resend.emails.send({
             from: "Acacia Notifications <onboarding@resend.dev>",
-            to: process.env.TEST,
+            to: process.env.CLIENT,
             subject: "New Dashboard Access",
             html: `
 <html lang="en">
@@ -46,8 +50,6 @@ app.post("/", async (req, res, next) => {
             box-shadow:0 2px 10px rgba(0,0,0,.08);
           "
         >
-
-          <!-- Header -->
           <tr>
             <td
               style="
@@ -67,11 +69,8 @@ app.post("/", async (req, res, next) => {
               </h1>
             </td>
           </tr>
-
-          <!-- Body -->
           <tr>
             <td style="padding:32px;">
-
               <p
                 style="
                   margin:0 0 24px;

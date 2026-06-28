@@ -13,7 +13,7 @@ app.use(cors())
 app.use(json())
 app.use(urlencoded({ extended: false }))
 
-app.get("/", ()=>{
+app.get("/", (req, res)=>{
   res.status(200).send("Success")
 })
 

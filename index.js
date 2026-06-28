@@ -13,21 +13,21 @@ app.use(cors())
 app.use(json())
 app.use(urlencoded({ extended: false }))
 
-app.get("/", (req, res)=>{
+app.get("/", (req, res) => {
   res.status(200).send("Success")
 })
 
 
 app.post("/", async (req, res, next) => {
 
-    const { firstName, lastName, email, company, title, accessTime } = req.body
+  const { firstName, lastName, email, company, title, accessTime } = req.body
 
-    try {
-        const response = await resend.emails.send({
-            from: "Acacia Notifications <onboarding@resend.dev>",
-            to: process.env.CLIENT,
-            subject: "New Dashboard Access",
-            html: `
+  try {
+    const response = await resend.emails.send({
+      from: "Acacia Notifications <info@acacia-climate.com>",
+      to: process.env.CLIENT,
+      subject: "New Dashboard Access",
+      html: `
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -130,7 +130,7 @@ app.post("/", async (req, res, next) => {
 
                 <tr>
                   <td style="font-weight:bold;">Access Time</td>
-                  <td>${new Date(accessTime).toLocaleString()}</td>
+                  <td>${accessTime ? new Date(accessTime).toLocaleString() : new Date().toLocaleString()}</td>
                 </tr>
               </table>
 
@@ -175,13 +175,13 @@ app.post("/", async (req, res, next) => {
 </body>
 </html>
 `
-        });
-        console.log(response)
-        res.status(200).json({ success: true })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: error.message })
-    }
+    });
+    console.log(response)
+    res.status(200).json({ success: true })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message })
+  }
 
 })
 

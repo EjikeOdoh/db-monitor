@@ -185,6 +185,7 @@ app.post("/", async (req, res, next) => {
 })
 
 app.post("/data-brief", async (req, res, next) => {
+
   const { firstName, lastName, email, accessTime } = req.body
 
   try {
@@ -288,7 +289,7 @@ app.post("/data-brief", async (req, res, next) => {
                 "
               >
                 This notification was generated automatically by the
-                <strong>Global Historical Agrivoltaic Project Dashboard</strong>
+                <strong>Acacia-climate Dashboard</strong>
                 access system after the visitor successfully submitted the access
                 form.
               </p>
@@ -321,7 +322,7 @@ app.post("/data-brief", async (req, res, next) => {
 </html>
 `
     });
-    console.log(response)
+
     res.status(200).json({ success: true })
   } catch (error) {
     console.log(error)

@@ -37,6 +37,8 @@ const escapeHtml = (value = "") =>
 
 const NAME_RE = /^(?=.*\p{L})[\p{L}’' \-]{2,50}$/u
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+// Free text (job title, company): 2-100 characters, no control characters
+const TEXT_RE = /^[^\p{C}]{2,100}$/u
 
 // ---------------------------------------------------------------------------
 // Routes
@@ -46,7 +48,7 @@ app.get("/", (req, res) => {
   res.status(200).send("Success")
 })
 
-// Dashboard access notification (unchanged behaviour, now with escaping)
+// Dashboard access notification (unchanged behaviour, with escaping)
 app.post("/", async (req, res) => {
   const { firstName, lastName, email, company, title, accessTime } = req.body ?? {}
 
@@ -185,12 +187,21 @@ app.post("/", async (req, res) => {
 
 // Gated PDF downloads (Data Brief, Blended Finance Market Insights, ...)
 app.post("/data-brief", async (req, res) => {
-  const { firstName, lastName, email, document: documentTitle } = req.body ?? {}
+  const {
+    firstName,
+    lastName,
+    title,
+    company,
+    email,
+    document: documentTitle,
+  } = req.body ?? {}
 
   // Server-side validation (client-side checks can be bypassed)
   if (
     !NAME_RE.test(firstName ?? "") ||
     !NAME_RE.test(lastName ?? "") ||
+    !TEXT_RE.test(String(title ?? "").trim()) ||
+    !TEXT_RE.test(String(company ?? "").trim()) ||
     !EMAIL_RE.test(email ?? "") ||
     String(email).length > 254
   ) {
@@ -204,6 +215,8 @@ app.post("/data-brief", async (req, res) => {
   const safe = {
     firstName: escapeHtml(firstName),
     lastName: escapeHtml(lastName),
+    title: escapeHtml(String(title).trim()),
+    company: escapeHtml(String(company).trim()),
     email: escapeHtml(email),
     document: escapeHtml(documentTitle),
   }
@@ -242,6 +255,14 @@ app.post("/data-brief", async (req, res) => {
                   <td>${safe.firstName} ${safe.lastName}</td>
                 </tr>
                 <tr>
+                  <td style="font-weight:bold;">Title</td>
+                  <td>${safe.title}</td>
+                </tr>
+                <tr style="background:#fafafa;">
+                  <td style="font-weight:bold;">Company</td>
+                  <td>${safe.company}</td>
+                </tr>
+                <tr>
                   <td style="font-weight:bold;">Email</td>
                   <td>
                     <a href="mailto:${safe.email}" style="color:#14532d;text-decoration:none;">${safe.email}</a>
@@ -255,7 +276,7 @@ app.post("/data-brief", async (req, res) => {
               <p style="margin:32px 0 0;font-size:14px;color:#6b7280;line-height:1.6;">
                 This notification was generated automatically by the
                 <strong>Acacia-climate</strong> access system after the visitor
-                submitted the download form.
+                submitted the download form. The email address has not been verified.
               </p>
             </td>
           </tr>
